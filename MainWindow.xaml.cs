@@ -42,7 +42,7 @@ namespace FakeNews
 
         private void ButtonSave_Click(object sender, RoutedEventArgs e)
         {
-
+            string Result = GetResult();
         }
 
         private bool OpenFile()
@@ -151,19 +151,22 @@ namespace FakeNews
             }
         }
 
-        public string ReturnResult()
+        public string GetResult()
         {
-            string Result = string.Empty;
-            int Length = WatchedVertices.Length;
-            Result = Length.ToString() + "/n";
-            for (int i = 0; i < Length; i++)
+            string Line1 = string.Empty;
+            string Line2 = string.Empty;
+            int NumberWatched = 0;
+            
+            for (int i = 0; i < WatchedVertices.Length; i++)
             {
                 if (WatchedVertices[i])
                 {
-                    Result += " " + i;
+                    NumberWatched++;
+                    Line2 += " " + i;
                 }
             }
-            return Result;
+            Line1 = NumberWatched.ToString() + "/n";
+            return Line1 + Line2;
         }
     }
 }
