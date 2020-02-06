@@ -62,7 +62,7 @@ namespace FakeNews
 
         private void DetermineWatchedVertecies()
         {
-            do
+            while(true)
             {
                 int Index = GetBestVertex();
                 if(Index == -1)
@@ -77,7 +77,7 @@ namespace FakeNews
                     Degrees[AdjacencyList[Index][I]]--;
                 }
 
-            } while (true);
+            }
         }
 
         private bool OpenFile()
@@ -115,45 +115,52 @@ namespace FakeNews
             // Split file into rows
             string[] Rows = FileString.Split('\n');
 
-            // Parse file
-            string[] Substrings = Rows[0].Split(' ');
-            VertexCount = int.Parse(Substrings[2]);
-            EdgeCount = int.Parse(Substrings[3]);
-
-            List<int>[] _AdjacencyList = new List<int>[VertexCount];
-            for(int I = 0; I < VertexCount; I++)
+            try
             {
-                _AdjacencyList[I] = new List<int>();
-            }
+                // Parse file
+                string[] Substrings = Rows[0].Split(' ');
+                VertexCount = int.Parse(Substrings[2]);
+                EdgeCount = int.Parse(Substrings[3]);
 
-            for (int I = 0; I < EdgeCount; I++)
-            {
-                string[] EdgeSubstrings = Rows[I + 1].Split(' ');
-                int U = int.Parse(EdgeSubstrings[0]) - 1;
-                int V = int.Parse(EdgeSubstrings[1]) - 1;
-                _AdjacencyList[U].Add(V);
-                _AdjacencyList[V].Add(U);
-            }
-
-            AdjacencyList = new int[VertexCount][];
-            Vertices = new int[VertexCount];
-            Degrees = new int[VertexCount];
-            WatchedVertices = new bool[VertexCount];
-            for (int I = 0; I < VertexCount; I++)
-            {
-                int Count = _AdjacencyList[I].Count;
-
-                Vertices[I] = I;
-                Degrees[I] = Count;
-                WatchedVertices[I] = false;
-
-                AdjacencyList[I] = new int[Count];
-                for(int J = 0; J < Count; J++)
+                List<int>[] _AdjacencyList = new List<int>[VertexCount];
+                for (int I = 0; I < VertexCount; I++)
                 {
-                    AdjacencyList[I][J] = _AdjacencyList[I][J];
+                    _AdjacencyList[I] = new List<int>();
+                }
+
+                for (int I = 0; I < EdgeCount; I++)
+                {
+                    string[] EdgeSubstrings = Rows[I + 1].Split(' ');
+                    int U = int.Parse(EdgeSubstrings[0]) - 1;
+                    int V = int.Parse(EdgeSubstrings[1]) - 1;
+                    _AdjacencyList[U].Add(V);
+                    _AdjacencyList[V].Add(U);
+                }
+
+                AdjacencyList = new int[VertexCount][];
+                Vertices = new int[VertexCount];
+                Degrees = new int[VertexCount];
+                WatchedVertices = new bool[VertexCount];
+                for (int I = 0; I < VertexCount; I++)
+                {
+                    int Count = _AdjacencyList[I].Count;
+
+                    Vertices[I] = I;
+                    Degrees[I] = Count;
+                    WatchedVertices[I] = false;
+
+                    AdjacencyList[I] = new int[Count];
+                    for (int J = 0; J < Count; J++)
+                    {
+                        AdjacencyList[I][J] = _AdjacencyList[I][J];
+                    }
                 }
             }
-
+            catch (Exception)
+            {
+                return false;
+                //throw;
+            }
             return true;
         }
 
@@ -185,6 +192,7 @@ namespace FakeNews
             }
         }
 
+        /*
         public class DegreeComparer : IComparer<int>
         {
             int IComparer<int>.Compare(int x, int y)
@@ -203,7 +211,7 @@ namespace FakeNews
                 }
             }
         }
-
+        */
         public string GetResult()
         {
             string Line1 = string.Empty;
