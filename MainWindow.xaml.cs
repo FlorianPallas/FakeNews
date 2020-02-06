@@ -27,8 +27,9 @@ namespace FakeNews
         private int VertexCount;
         private int EdgeCount;
         private int[][] AdjacencyList;
-        private Vertex[] Vertices;
+        private int[] Vertices;
         private bool[] WatchedVertices;
+        static private int[] Degrees;
 
         public MainWindow()
         {
@@ -38,11 +39,45 @@ namespace FakeNews
         private void ButtonOpen_Click(object sender, RoutedEventArgs e)
         {
             OpenFile();
+            DetermineWatchedVertecies();
         }
 
         private void ButtonSave_Click(object sender, RoutedEventArgs e)
         {
-            string Result = GetResult();
+            
+            int Counter = 0;
+            for(int I = 0; I < VertexCount; I++)
+            {
+                if (WatchedVertices[I])
+                {
+                    Counter++;
+                }
+            }
+        }
+
+        private void SaveFile()
+        {
+
+        }
+
+        private void DetermineWatchedVertecies()
+        {
+            do
+            {
+                int Index = GetBestVertex();
+                if(Index == -1)
+                {
+                    break;
+                }
+
+                WatchedVertices[Index] = true;
+                Degrees[Index] = 0;
+                for (int I = 0; I < AdjacencyList[Index].Length; I++)
+                {
+                    Degrees[AdjacencyList[Index][I]]--;
+                }
+
+            } while (true);
         }
 
         private bool OpenFile()
@@ -101,12 +136,16 @@ namespace FakeNews
             }
 
             AdjacencyList = new int[VertexCount][];
-            Vertices = new Vertex[VertexCount];
+            Vertices = new int[VertexCount];
+            Degrees = new int[VertexCount];
+            WatchedVertices = new bool[VertexCount];
             for (int I = 0; I < VertexCount; I++)
             {
                 int Count = _AdjacencyList[I].Count;
 
-                Vertices[I] = new Vertex(I, Count);
+                Vertices[I] = I;
+                Degrees[I] = Count;
+                WatchedVertices[I] = false;
 
                 AdjacencyList[I] = new int[Count];
                 for(int J = 0; J < Count; J++)
@@ -115,9 +154,23 @@ namespace FakeNews
                 }
             }
 
-            Array.Sort(Vertices, new DegreeComparer());
-
             return true;
+        }
+
+        private int GetBestVertex()
+        {
+            int BestIndex = -1;
+            int BestDegree = 0;
+            for(int I = 0; I < VertexCount; I++)
+            {
+                if(Degrees[I] > BestDegree)
+                {
+                    BestIndex = I;
+                    BestDegree = Degrees[I];
+                }
+            }
+
+            return BestIndex;
         }
 
         public struct Vertex
@@ -132,15 +185,15 @@ namespace FakeNews
             }
         }
 
-        public class DegreeComparer : IComparer<Vertex>
+        public class DegreeComparer : IComparer<int>
         {
-            int IComparer<Vertex>.Compare(Vertex x, Vertex y)
+            int IComparer<int>.Compare(int x, int y)
             {
-                if(x.UnwatchedDegree > y.UnwatchedDegree)
+                if(Degrees[x] > Degrees[y])
                 {
                     return -1;
                 }
-                if (x.UnwatchedDegree < y.UnwatchedDegree)
+                if (Degrees[x] < Degrees[y])
                 {
                     return 1;
                 }
