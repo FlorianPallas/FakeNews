@@ -108,9 +108,6 @@ namespace FakeNews
                         AdjacencyList[I][J] = _AdjacencyList[I][J];
                     }
                 }
-
-               
-
             }
             catch (Exception e)
             {
@@ -119,6 +116,24 @@ namespace FakeNews
             }
 
             return true;
+        }
+
+        private void SortGradArray()
+        {
+            int[,] Dummy = new int[10, 2];
+            //Array.Sort(Dummy,)
+        }
+
+        public struct Vertex
+        {
+            int Index;
+            int UnwatchedDegree;
+
+            Vertex(int _Index, int _UnwatchedDegree)
+            {
+                Index = _Index;
+                UnwatchedDegree = _UnwatchedDegree;
+            }
         }
     }
 }
