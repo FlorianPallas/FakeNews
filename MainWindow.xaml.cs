@@ -29,7 +29,7 @@ namespace FakeNews
 
         private void ButtonOpen_Click(object sender, RoutedEventArgs e)
         {
-
+            OpenFile();
         }
 
         private void ButtonSave_Click(object sender, RoutedEventArgs e)
@@ -77,13 +77,36 @@ namespace FakeNews
                 string[] Substrings = Rows[0].Split(' ');
                 int n = int.Parse(Substrings[2]);
                 int m = int.Parse(Substrings[3]);
+
+                List<int>[] _AdjacencyList = new List<int>[n];
                 for(int I = 0; I < n; I++)
                 {
-                    string[] EdgeSubstrings = Rows[I + 1].Split(' ');
-
+                    _AdjacencyList[I] = new List<int>();
                 }
+
+                for (int I = 0; I < n; I++)
+                {
+                    string[] EdgeSubstrings = Rows[I + 1].Split(' ');
+                    int U = int.Parse(EdgeSubstrings[0]);
+                    int V = int.Parse(EdgeSubstrings[1]);
+                    _AdjacencyList[U].Add(V);
+                    _AdjacencyList[V].Add(U);
+                }
+
+                int[][] AdjacencyList = new int[n][];
+                for (int I = 0; I < n; I++)
+                {
+                    int Count = _AdjacencyList[I].Count;
+                    AdjacencyList[I] = new int[Count];
+                    for(int J = 0; J < Count; J++)
+                    {
+                        AdjacencyList[I][J] = _AdjacencyList[I][J];
+                    }
+                }
+
+
             }
-            catch
+            catch (Exception e)
             {
                 MessageBox.Show("Die Datei konnte nicht eingelesen werden!", "Operation fehlgeschlagen", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
