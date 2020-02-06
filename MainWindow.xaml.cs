@@ -22,6 +22,11 @@ namespace FakeNews
     /// </summary>
     public partial class MainWindow : Window
     {
+        private string FileName;
+        private int VertexCount;
+        private int EdgeCount;
+        private int[][] AdjacencyList;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -49,6 +54,7 @@ namespace FakeNews
             }
 
             // Read file contents
+            FileName = Dlg.FileName;
             FileStream File = new FileStream(Dlg.FileName, FileMode.Open);
             string FileString = String.Empty;
             StreamReader Reader = new StreamReader(File);
@@ -75,16 +81,16 @@ namespace FakeNews
             {
                 // Parse file
                 string[] Substrings = Rows[0].Split(' ');
-                int n = int.Parse(Substrings[2]);
-                int m = int.Parse(Substrings[3]);
+                VertexCount = int.Parse(Substrings[2]);
+                EdgeCount = int.Parse(Substrings[3]);
 
-                List<int>[] _AdjacencyList = new List<int>[n];
-                for(int I = 0; I < n; I++)
+                List<int>[] _AdjacencyList = new List<int>[VertexCount];
+                for(int I = 0; I < VertexCount; I++)
                 {
                     _AdjacencyList[I] = new List<int>();
                 }
 
-                for (int I = 0; I < m; I++)
+                for (int I = 0; I < EdgeCount; I++)
                 {
                     string[] EdgeSubstrings = Rows[I + 1].Split(' ');
                     int U = int.Parse(EdgeSubstrings[0]) - 1;
@@ -93,9 +99,9 @@ namespace FakeNews
                     _AdjacencyList[V].Add(U);
                 }
 
-                int[][] AdjacencyList = new int[n][];
-                int[,] GradArray = new int[n, 2];
-                for (int I = 0; I < n; I++)
+                AdjacencyList = new int[VertexCount][];
+                int[,] GradArray = new int[VertexCount, 2];
+                for (int I = 0; I < VertexCount; I++)
                 {
                     int Count = _AdjacencyList[I].Count;
 
