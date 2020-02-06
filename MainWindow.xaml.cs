@@ -94,9 +94,14 @@ namespace FakeNews
                 }
 
                 int[][] AdjacencyList = new int[n][];
+                int[,] GradArray = new int[n, 2];
                 for (int I = 0; I < n; I++)
                 {
                     int Count = _AdjacencyList[I].Count;
+
+                    GradArray[I, 0] = I;
+                    GradArray[I, 1] = Count;
+
                     AdjacencyList[I] = new int[Count];
                     for(int J = 0; J < Count; J++)
                     {
