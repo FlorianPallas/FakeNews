@@ -44,20 +44,56 @@ namespace FakeNews
 
         private void ButtonSave_Click(object sender, RoutedEventArgs e)
         {
-            
-            int Counter = 0;
-            for(int I = 0; I < VertexCount; I++)
-            {
-                if (WatchedVertices[I])
-                {
-                    Counter++;
-                }
-            }
+            SaveFile();
         }
 
-        private void SaveFile()
+        private bool SaveFile()
         {
+            SaveFileDialog Dlg = new SaveFileDialog()
+            {
+                Filter = "Solution Files (*.sol)|*.sol|All files (*.*)|*.*",
+                DefaultExt = ".sol",
+                FilterIndex = 0
+            };
 
+            if (Dlg.ShowDialog() != true)
+            {
+                return false;
+            }
+
+            string SaveFileName = Dlg.FileName;
+            FileStream File = new FileStream(Dlg.FileName, FileMode.OpenOrCreate);
+            StreamWriter Writer = new StreamWriter(File);
+
+            try
+            {
+                string Output = string.Empty;
+                int WatchedVerticesCount = 0;
+                for (int I = 0; I < VertexCount; I++)
+                {
+                    if (WatchedVertices[I])
+                    {
+                        WatchedVerticesCount++;
+                        Output += I.ToString() + " ";
+                    }
+                }
+
+                Writer.WriteLine(WatchedVerticesCount.ToString());
+                Writer.WriteLine(Output.TrimEnd());
+            }
+            catch
+            {
+                MessageBox.Show("Die Datei konnte nicht eingelesen werden.");
+                return false;
+            }
+            finally
+            {
+                Writer.Flush();
+                Writer.Close();
+                File.Close();
+            }
+
+            return true;
         }
 
         private void DetermineWatchedVertecies()
@@ -83,7 +119,11 @@ namespace FakeNews
         private bool OpenFile()
         {
             // Open file dialog
-            OpenFileDialog Dlg = new OpenFileDialog();
+            OpenFileDialog Dlg = new OpenFileDialog()
+            {
+                Filter = "Graph Files (*.graph)|*.graph|All files (*.*)|*.*",
+                FilterIndex = 0
+            };
 
             // Return if user cancels selection
             if (Dlg.ShowDialog() != true)
