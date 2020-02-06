@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,6 +27,8 @@ namespace FakeNews
         private int VertexCount;
         private int EdgeCount;
         private int[][] AdjacencyList;
+        private Vertex[] Vertices;
+        private bool[] WatchedVertices;
 
         public MainWindow()
         {
@@ -77,68 +80,74 @@ namespace FakeNews
             // Split file into rows
             string[] Rows = FileString.Split('\n');
 
-            try
+            // Parse file
+            string[] Substrings = Rows[0].Split(' ');
+            VertexCount = int.Parse(Substrings[2]);
+            EdgeCount = int.Parse(Substrings[3]);
+
+            List<int>[] _AdjacencyList = new List<int>[VertexCount];
+            for(int I = 0; I < VertexCount; I++)
             {
-                // Parse file
-                string[] Substrings = Rows[0].Split(' ');
-                VertexCount = int.Parse(Substrings[2]);
-                EdgeCount = int.Parse(Substrings[3]);
+                _AdjacencyList[I] = new List<int>();
+            }
 
-                List<int>[] _AdjacencyList = new List<int>[VertexCount];
-                for(int I = 0; I < VertexCount; I++)
+            for (int I = 0; I < EdgeCount; I++)
+            {
+                string[] EdgeSubstrings = Rows[I + 1].Split(' ');
+                int U = int.Parse(EdgeSubstrings[0]) - 1;
+                int V = int.Parse(EdgeSubstrings[1]) - 1;
+                _AdjacencyList[U].Add(V);
+                _AdjacencyList[V].Add(U);
+            }
+
+            AdjacencyList = new int[VertexCount][];
+            Vertices = new Vertex[VertexCount];
+            for (int I = 0; I < VertexCount; I++)
+            {
+                int Count = _AdjacencyList[I].Count;
+
+                Vertices[I] = new Vertex(I, Count);
+
+                AdjacencyList[I] = new int[Count];
+                for(int J = 0; J < Count; J++)
                 {
-                    _AdjacencyList[I] = new List<int>();
-                }
-
-                for (int I = 0; I < EdgeCount; I++)
-                {
-                    string[] EdgeSubstrings = Rows[I + 1].Split(' ');
-                    int U = int.Parse(EdgeSubstrings[0]) - 1;
-                    int V = int.Parse(EdgeSubstrings[1]) - 1;
-                    _AdjacencyList[U].Add(V);
-                    _AdjacencyList[V].Add(U);
-                }
-
-                AdjacencyList = new int[VertexCount][];
-                int[,] GradArray = new int[VertexCount, 2];
-                for (int I = 0; I < VertexCount; I++)
-                {
-                    int Count = _AdjacencyList[I].Count;
-
-                    GradArray[I, 0] = I;
-                    GradArray[I, 1] = Count;
-
-                    AdjacencyList[I] = new int[Count];
-                    for(int J = 0; J < Count; J++)
-                    {
-                        AdjacencyList[I][J] = _AdjacencyList[I][J];
-                    }
+                    AdjacencyList[I][J] = _AdjacencyList[I][J];
                 }
             }
-            catch (Exception e)
-            {
-                MessageBox.Show("Die Datei konnte nicht eingelesen werden!", "Operation fehlgeschlagen", MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
-            }
+
+            Array.Sort(Vertices, new DegreeComparer());
 
             return true;
         }
 
-        private void SortGradArray()
-        {
-            int[,] Dummy = new int[10, 2];
-            //Array.Sort(Dummy,)
-        }
-
         public struct Vertex
         {
-            int Index;
-            int UnwatchedDegree;
+            public int Index;
+            public int UnwatchedDegree;
 
-            Vertex(int _Index, int _UnwatchedDegree)
+            public Vertex(int _Index, int _UnwatchedDegree)
             {
                 Index = _Index;
                 UnwatchedDegree = _UnwatchedDegree;
+            }
+        }
+
+        public class DegreeComparer : IComparer<Vertex>
+        {
+            int IComparer<Vertex>.Compare(Vertex x, Vertex y)
+            {
+                if(x.UnwatchedDegree > y.UnwatchedDegree)
+                {
+                    return -1;
+                }
+                if (x.UnwatchedDegree < y.UnwatchedDegree)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
             }
         }
     }
