@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FakeNews"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="Fake News" SizeToContent="WidthAndHeight">
+    <StackPanel Margin="10">
+        <Button Name="ButtonOpen" Height="25" Content="Open" Click="ButtonOpen_Click" />
+        <Button Name="ButtonSave" Height="25" Margin="0 10 0 0" Content="Save" Click="ButtonSave_Click" />
+    </StackPanel>
 </Window>
