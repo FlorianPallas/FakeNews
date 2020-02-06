@@ -84,11 +84,11 @@ namespace FakeNews
                     _AdjacencyList[I] = new List<int>();
                 }
 
-                for (int I = 0; I < n; I++)
+                for (int I = 0; I < m; I++)
                 {
                     string[] EdgeSubstrings = Rows[I + 1].Split(' ');
-                    int U = int.Parse(EdgeSubstrings[0]);
-                    int V = int.Parse(EdgeSubstrings[1]);
+                    int U = int.Parse(EdgeSubstrings[0]) - 1;
+                    int V = int.Parse(EdgeSubstrings[1]) - 1;
                     _AdjacencyList[U].Add(V);
                     _AdjacencyList[V].Add(U);
                 }
@@ -103,8 +103,6 @@ namespace FakeNews
                         AdjacencyList[I][J] = _AdjacencyList[I][J];
                     }
                 }
-
-
             }
             catch (Exception e)
             {
