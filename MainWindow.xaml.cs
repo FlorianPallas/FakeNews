@@ -150,5 +150,20 @@ namespace FakeNews
                 }
             }
         }
+
+        public string ReturnResult()
+        {
+            string Result = string.Empty;
+            int Length = WatchedVertices.Length;
+            Result = Length.ToString() + "/n";
+            for (int i = 0; i < Length; i++)
+            {
+                if (WatchedVertices[i])
+                {
+                    Result += " " + i;
+                }
+            }
+            return Result;
+        }
     }
 }
