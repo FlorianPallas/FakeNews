@@ -1,29 +1,14 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace FakeNews
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
-        private string FileName;
         private int VertexCount;
         private int EdgeCount;
         private int[][] AdjacencyList;
@@ -39,7 +24,11 @@ namespace FakeNews
         private void ButtonOpen_Click(object sender, RoutedEventArgs e)
         {
             OpenFile();
+            Stopwatch Timer = new Stopwatch();
+            Timer.Start();
             DetermineWatchedVertecies();
+            Timer.Stop();
+            MessageBox.Show("Berechnet in: " + Timer.Elapsed);
         }
 
         private void ButtonSave_Click(object sender, RoutedEventArgs e)
@@ -83,7 +72,7 @@ namespace FakeNews
             }
             catch
             {
-                MessageBox.Show("Die Datei konnte nicht eingelesen werden.");
+                MessageBox.Show("Die Datei konnte nicht gespeichert werden!");
                 return false;
             }
             finally
@@ -132,7 +121,7 @@ namespace FakeNews
             }
 
             // Read file contents
-            FileName = Dlg.FileName;
+            string FileName = Dlg.FileName;
             FileStream File = new FileStream(Dlg.FileName, FileMode.Open);
             string FileString = String.Empty;
             StreamReader Reader = new StreamReader(File);
@@ -143,7 +132,7 @@ namespace FakeNews
             }
             catch
             {
-                MessageBox.Show("Die Datei konnte nicht eingelesen werden.");
+                MessageBox.Show("Die Datei konnte nicht eingelesen werden!");
                 return false;
             }
             finally
@@ -198,19 +187,75 @@ namespace FakeNews
             }
             catch (Exception)
             {
+                MessageBox.Show("Die Datei konnte nicht verarbeitet werden!");
                 return false;
-                //throw;
             }
             return true;
         }
 
+        /*
         private int GetBestVertex()
         {
-            int BestIndex = -1;
             int BestDegree = 0;
             for(int I = 0; I < VertexCount; I++)
             {
                 if(Degrees[I] > BestDegree)
+                {
+                    BestDegree = Degrees[I];
+                }
+            }
+
+            List<int> BestIndices = new List<int>();
+            for (int I = 0; I < VertexCount; I++)
+            {
+                if (Degrees[I] == BestDegree)
+                {
+                    BestIndices.Add(I);
+                }
+            }
+
+            if(BestIndices.Count < 1)
+            {
+                return -1;
+            }
+            else if(BestIndices.Count == 1)
+            {
+                return BestIndices[0];
+            }
+
+            int[] DegreeSums = new int[BestIndices.Count];
+            for(int I = 0; I < BestIndices.Count; I++)
+            {
+                int Sum = 0;
+                for (int J = 0; J < AdjacencyList[BestIndices[I]].Length; J++)
+                {
+                    Sum += Degrees[AdjacencyList[BestIndices[I]][J]];
+                }
+                DegreeSums[I] = Sum;
+            }
+
+            int BestIndex = -1;
+            int BestSum = 0;
+            for (int I = 0; I < BestIndices.Count; I++)
+            {
+                if (DegreeSums[I] > BestSum)
+                {
+                    BestSum = DegreeSums[I];
+                    BestIndex = BestIndices[I];
+                }
+            }
+
+            return BestIndex;
+        }
+        */
+        
+        private int GetBestVertex()
+        {
+            int BestDegree = 0;
+            int BestIndex = -1;
+            for (int I = 0; I < VertexCount; I++)
+            {
+                if (Degrees[I] > BestDegree)
                 {
                     BestIndex = I;
                     BestDegree = Degrees[I];
@@ -219,6 +264,7 @@ namespace FakeNews
 
             return BestIndex;
         }
+        
 
         public struct Vertex
         {
